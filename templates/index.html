@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Crime Audio Classifier</title>
+</head>
+<body>
+  <h2>Upload Audio File</h2>
+  <form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" name="file" accept="audio/*" required>
+    <button type="submit">Upload & Predict</button>
+  </form>
+
+  <h2>Or Record Live Audio</h2>
+  <button onclick="startRecording()">Start</button>
+  <button onclick="stopRecording()">Stop & Predict</button>
+  <p id="result"></p>
+
+  <script>
+    let mediaRecorder, audioChunks = [];
+
+    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
+      const res = await fetch('/predict', { method: 'POST', body: formData });
+      const json = await res.json();
+      document.getElementById('result').innerText = 'Prediction: ' + json.prediction;
+    });
+
+    function startRecording() {
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.start();
+        audioChunks = [];
+        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+      });
+    }
+
+    function stopRecording() {
+      mediaRecorder.stop();
+      mediaRecorder.onstop = async () => {
+        const blob = new Blob(audioChunks, { type: 'audio/wav' });
+        const formData = new FormData();
+        formData.append('file', blob, 'live_recording.wav');
+        const res = await fetch('/predict', { method: 'POST', body: formData });
+        const json = await res.json();
+        document.getElementById('result').innerText = 'Prediction: ' + json.prediction;
+      };
+    }
+  </script>
+</body>
+</html>
