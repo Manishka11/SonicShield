@@ -1,9 +1,6 @@
-flask
-werkzeug
 torch
 torchaudio
-librosa
+gradio
 numpy
 scipy
 soundfile
-gunicorn
