@@ -35,7 +35,6 @@ SonicShield/
 - Can be extended to real-time streaming and edge devices
 - Hosted on Hugging Face Deployment for global access and scalability
 - Designed with MLOps-readiness in mind (supports future containerization and CI/CD pipelines)
-  - Based on transformer architecture trained on real-world urban and environmental audio
 
 ---
 
