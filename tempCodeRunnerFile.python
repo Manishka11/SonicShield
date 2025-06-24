@@ -1,3 +1,0 @@
-import torch
-model = torch.jit.load("model/model.pth")
-print("✅ Model loaded as TorchScript")
